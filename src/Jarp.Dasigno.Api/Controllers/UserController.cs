@@ -81,7 +81,7 @@ namespace Jarp.Dasigno.Api.Controllers
             return StatusCode(StatusCodes.Status200OK, ResponseApiServices.Response(StatusCodes.Status200OK, data));
         }
 
-        [HttpGet("get-by-page-data-name-lastname")]
+        [HttpPost("get-by-page-data-name-lastname")]
         public async Task<IActionResult> GetByNameOrLastName([FromBody] RequestByFirsNameOrLastName requestByFirsNameOrLastName, 
             [FromServices] IGetUserByNameOrLastNameQuery getUserByNameOrLastNameQuery)
         {
