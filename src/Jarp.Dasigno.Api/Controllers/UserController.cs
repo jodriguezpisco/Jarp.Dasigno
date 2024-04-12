@@ -8,8 +8,6 @@ using Jarp.Dasigno.Application.Database.User.Queries.GetUserByNameOrLastName;
 using Jarp.Dasigno.Application.Exceptions;
 using Jarp.Dasigno.Application.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
 
 namespace Jarp.Dasigno.Api.Controllers
 {
@@ -23,7 +21,7 @@ namespace Jarp.Dasigno.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateUserModel model, [FromServices] ICreateUserCommand createUserCommand, [FromServices] IValidator<CreateUserModel> validator)
         {
             var validate = await validator.ValidateAsync(model);
-            if(!validate.IsValid)
+            if (!validate.IsValid)
                 return StatusCode(StatusCodes.Status400BadRequest, ResponseApiServices.Response(StatusCodes.Status400BadRequest, validate.Errors));
 
             var data = await createUserCommand.Execute(model);
@@ -43,14 +41,14 @@ namespace Jarp.Dasigno.Api.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
-        public async Task<IActionResult> Delete(int userId,[FromServices] IDeleteUserCommand deleteUserCommand)
+        public async Task<IActionResult> Delete(int userId, [FromServices] IDeleteUserCommand deleteUserCommand)
         {
             if (userId == 0)
                 return StatusCode(StatusCodes.Status400BadRequest, ResponseApiServices.Response(StatusCodes.Status400BadRequest));
 
             var data = await deleteUserCommand.Execute(userId);
 
-            if(!data)
+            if (!data)
                 return StatusCode(StatusCodes.Status404NotFound, ResponseApiServices.Response(StatusCodes.Status404NotFound, data));
 
             return StatusCode(StatusCodes.Status200OK, ResponseApiServices.Response(StatusCodes.Status200OK, data));
@@ -61,7 +59,7 @@ namespace Jarp.Dasigno.Api.Controllers
         {
             var data = await getAllUserQuery.Execute();
 
-            if(data == null || data.Count == 0)
+            if (data == null || data.Count == 0)
                 return StatusCode(StatusCodes.Status404NotFound, ResponseApiServices.Response(StatusCodes.Status404NotFound, data));
 
             return StatusCode(StatusCodes.Status200OK, ResponseApiServices.Response(StatusCodes.Status200OK, data));
@@ -82,16 +80,16 @@ namespace Jarp.Dasigno.Api.Controllers
         }
 
         [HttpPost("get-by-page-data-name-lastname")]
-        public async Task<IActionResult> GetByNameOrLastName([FromBody] RequestByFirsNameOrLastName requestByFirsNameOrLastName, 
+        public async Task<IActionResult> GetByNameOrLastName([FromBody] RequestByFirsNameOrLastName requestByFirsNameOrLastName,
             [FromServices] IGetUserByNameOrLastNameQuery getUserByNameOrLastNameQuery)
         {
-            if(requestByFirsNameOrLastName == null)
+            if (requestByFirsNameOrLastName == null)
                 return StatusCode(StatusCodes.Status404NotFound, ResponseApiServices.Response(StatusCodes.Status404NotFound));
 
             var data = await getUserByNameOrLastNameQuery.Execute(requestByFirsNameOrLastName);
 
             if (data == null || data.Count == 0)
-                return StatusCode(StatusCodes.Status204NoContent, ResponseApiServices.Response(StatusCodes.Status400BadRequest, data));
+                return StatusCode(StatusCodes.Status404NotFound, ResponseApiServices.Response(StatusCodes.Status404NotFound, data));
 
             return StatusCode(StatusCodes.Status200OK, ResponseApiServices.Response(StatusCodes.Status200OK, data));
         }
